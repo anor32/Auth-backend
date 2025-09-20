@@ -24,5 +24,6 @@ class UserLoginSerializer(serializers.ModelSerializer):
 
 
 class UserProfileSerializer(serializers.ModelSerializer):
-    model = User
-    fields = ('email', 'first_name', 'last_name', 'middle_name')
+    class Meta:
+        model = User
+        fields = ('email', 'first_name', 'last_name', 'middle_name')
