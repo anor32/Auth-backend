@@ -19,9 +19,14 @@ class UserRegisterSerializer(serializers.ModelSerializer):
 
 
 class UserLoginSerializer(serializers.ModelSerializer):
-    model = User
-    fields = ('email','password')
+    class Meta:
+        model = User
+        fields = ('email','password')
 
+class UserDeleteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model =User
+        fields = ('email','password')
 
 class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
