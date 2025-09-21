@@ -135,7 +135,7 @@ class UserLogout(APIView):
 
 class DeleteUser(APIView):
     serializer_class = UserDeleteSerializer
-    def delete(self,request,pk):
+    def delete(self,request,pk=None):
         if str(request.user.role) == "USER":
             user = request.user
         elif str(request.user.role) in ["ADMIN", ]:
