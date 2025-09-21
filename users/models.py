@@ -61,7 +61,7 @@ class User(AbstractBaseUser,PermissionsMixin):
     REQUIRED_FIELDS = ['first_name', 'last_name']
 
     def save(self, *args, **kwargs):
-        if not self.role:
+        if not self.role_id:
             user_role, created = Role.objects.get_or_create(name='USER')
             self.role = user_role
         super().save(*args, **kwargs)
