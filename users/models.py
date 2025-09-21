@@ -33,7 +33,7 @@ class UserManager(BaseUserManager):
 
         return self._create_user(email, password, **extra_fields)
 
-class Role:
+class Role(models.Model):
     name = models.CharField(max_length=100, unique=True)
     can_edit = models.BooleanField(default=False)
     can_delete = models.BooleanField(default=False)
@@ -49,7 +49,7 @@ class User(AbstractBaseUser,PermissionsMixin):
     last_name = models.CharField(verbose_name='Фамилия', max_length=150)
     middle_name = models.CharField(verbose_name='Отчество', max_length=150, blank=True, null=True)
     email = models.EmailField(verbose_name="почта", unique=True, max_length=250)
-    role = models.ForeignKey(Role,on_delete=models.PROTECT,verbose_name="роль",default=get_default_role_id )
+    role = models.ForeignKey(Role,on_delete=models.PROTECT,verbose_name="Роль", )
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
 
