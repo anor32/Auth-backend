@@ -2,8 +2,9 @@ from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
 from django.contrib.auth.models import PermissionsMixin
 from django.db import models
 
+
 # Create your models here.
-class UserManager(BaseUserManager,PermissionsMixin):
+class UserManager(BaseUserManager):
     use_in_migrations = True
 
     def _create_user(self, email, password, **extra_fields):
@@ -31,18 +32,18 @@ class UserManager(BaseUserManager,PermissionsMixin):
 
         return self._create_user(email, password, **extra_fields)
 
-class User(AbstractBaseUser):
+
+class User(AbstractBaseUser,PermissionsMixin):
     ROLE_CHOICES = (
         ('ADMIN', 'Администратор'),
         ('MODERATOR', 'Менеджер'),
         ('USER', 'Пользователь'),
     )
 
-
-    first_name = models.CharField(verbose_name='Имя',max_length=150)
-    last_name = models.CharField(verbose_name='Фамилия',max_length=150)
-    middle_name = models.CharField(verbose_name='Отчество',max_length=150,blank=True,null=True)
-    email = models.EmailField(verbose_name="почта",unique=True,max_length=250)
+    first_name = models.CharField(verbose_name='Имя', max_length=150)
+    last_name = models.CharField(verbose_name='Фамилия', max_length=150)
+    middle_name = models.CharField(verbose_name='Отчество', max_length=150, blank=True, null=True)
+    email = models.EmailField(verbose_name="почта", unique=True, max_length=250)
     role = models.CharField(max_length=15, choices=ROLE_CHOICES, default="USER")
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
