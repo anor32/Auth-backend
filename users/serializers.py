@@ -20,10 +20,9 @@ class UserRegisterSerializer(serializers.ModelSerializer):
         return user
 
 
-class UserLoginSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = ('email','password')
+class UserLoginSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+    password = serializers.CharField(write_only=True)
 
 class UserDeleteSerializer(serializers.ModelSerializer):
     class Meta:
