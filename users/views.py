@@ -1,18 +1,19 @@
-from http.client import responses
+
 from tokenize import TokenError
 
 from django.contrib.auth import authenticate
-from django.core.serializers import serialize
+
 from django.shortcuts import render, get_object_or_404
+
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework_simplejwt.tokens import RefreshToken
-
+from  users.models import Role
 # Create your views here.
 from users.models import User
 from users.serializers import UserRegisterSerializer, UserLoginSerializer, UserProfileSerializer, UserDeleteSerializer, \
-    LogoutSerializer
+    LogoutSerializer, AdminChangePermissionSerializer
 
 
 class RegisterUserApi(APIView):
@@ -160,9 +161,18 @@ class DeleteUser(APIView):
 
         return Response({'message': 'Аккаунт Успешно удален'},status=status.HTTP_200_OK)
 class AdminManageRoles(APIView):
-    def post(self):
-        pass
-        #if role == admin:
-        #{user:id role:'moderator',status,''}
+    serializer_class = AdminChangePermissionSerializer
+    def post(self,request):
+        serializer = self.serializer_class(data=request.data)
+        if serializer.is_valid():
+            role = serializer.role
+            perms = serializer.perms
+            role = get_object_or_404(Role,name=role)
+            for perm_field, perm_value in perms.items():
+                if hasattr(role, perm_field):
+                    setattr(role, perm_field, perm_value)
+            role.save()
 
-        # должен назначать разрешения роли что она может с книгами делать а что не может также назначачть пользователям роли
+            return Response({'detail': 'Права успешно обновлены'}, status=status.HTTP_200_OK)
+        else:
+            return Response(serializer.errors, status=400)
