@@ -23,18 +23,18 @@ class BookCreateApiView(CustomPermissionMixin, CreateAPIView):
         serializer_class = BookSerializer
 
 
-class BookUpdateApiView(UpdateAPIView):
+class BookUpdateApiView(CustomPermissionMixin,UpdateAPIView):
         model = Book
         queryset = Book.objects.all()
         serializer_class = BookSerializer
 
 
-class BookDeleteApiView(DestroyAPIView):
+class BookDeleteApiView(CustomPermissionMixin,DestroyAPIView):
         model = Book
         queryset = Book.objects.all()
         serializer_class = BookSerializer
 
-class BookRetrieveApiView(RetrieveAPIView):
+class BookRetrieveApiView(CustomPermissionMixin,RetrieveAPIView):
     queryset = Book.objects.all()
     serializer_class = BookSerializer
 
