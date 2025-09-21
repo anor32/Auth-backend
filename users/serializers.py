@@ -1,3 +1,5 @@
+from random import choices
+
 from rest_framework import serializers
 
 from users.models import User
@@ -36,3 +38,17 @@ class UserProfileSerializer(serializers.ModelSerializer):
 
 class LogoutSerializer(serializers.Serializer):
     refresh_token = serializers.CharField(required=True)
+
+
+class AdminChangePermissionSerializer(serializers.Serializer):
+
+    role = serializers.CharField(required=True)
+    CHOICES =['can_delete','can_edit','can_view','can_view_all','can_delete_all','can_edit_all']
+    perms = serializers.DictField(child=serializers.BooleanField(),required=True)
+
+    def validate_perms(self,value):
+        for perm in value:
+            if perm not in self.CHOICES:
+                raise serializers.ValidationError(f"Передан Неверный ключ {perm}")
+
+        return value
