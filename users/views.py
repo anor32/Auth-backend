@@ -70,23 +70,24 @@ class UserProfileApi(APIView):
     serializer_class = UserProfileSerializer
 
     def get(self, request, pk=None):
-        if request.user.role == "USER":
+        if str(request.user.role) == "USER":
             user = request.user
-        elif request.user.role in ["ADMIN", "MODERATOR"]:
+        elif str(request.user.role) in ["ADMIN", "MODERATOR"]:
             if pk is None:
                 user = request.user
             else:
                 user = get_object_or_404(User, pk=pk)
         else:
-            return Response({'error': 'не зарегистрирован'}, status=status.HTTP_403_FORBIDDEN)
+
+            return Response({'error': f'не зарегистрирован' }, status=status.HTTP_403_FORBIDDEN)
 
         serialized_user = self.serializer_class(user)
         return Response(serialized_user.data, status=status.HTTP_200_OK)
 
-    def patch(self,request,pk):
-        if request.user.role == "USER":
+    def patch(self,request,pk=None):
+        if str(request.user.role) == "USER":
             user = request.user
-        elif request.user.role in ["ADMIN",]:
+        elif str(request.user.role) in ["ADMIN",]:
             if pk is None:
                 user = request.user
             else:
@@ -100,10 +101,10 @@ class UserProfileApi(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-    def put(self,request,pk):
-        if request.user.role == "USER":
+    def put(self,request,pk=None):
+        if str(request.user.role) == "USER":
             user = request.user
-        elif request.user.role in ["ADMIN", ]:
+        elif str(request.user.role) in ["ADMIN", ]:
             if pk is None:
                 user = request.user
             else:
@@ -135,9 +136,9 @@ class UserLogout(APIView):
 class DeleteUser(APIView):
     serializer_class = UserDeleteSerializer
     def delete(self,request,pk):
-        if request.user.role == "USER":
+        if str(request.user.role) == "USER":
             user = request.user
-        elif request.user.role in ["ADMIN", ]:
+        elif str(request.user.role) in ["ADMIN", ]:
             if pk is None:
                 user = request.user
             else:
@@ -162,15 +163,17 @@ class DeleteUser(APIView):
         return Response({'message': 'Аккаунт Успешно удален'},status=status.HTTP_200_OK)
 class AdminManageRoles(APIView):
     serializer_class = AdminChangePermissionSerializer
+
     def post(self,request):
         serializer = self.serializer_class(data=request.data)
         if serializer.is_valid():
-            role = serializer.role
-            perms = serializer.perms
-            role = get_object_or_404(Role,name=role)
+            perms = serializer.validated_data.get('perms', {})
+            role_q = request.query_params.get('role')
+            role = get_object_or_404(Role,name=role_q)
             for perm_field, perm_value in perms.items():
                 if hasattr(role, perm_field):
                     setattr(role, perm_field, perm_value)
+
             role.save()
 
             return Response({'detail': 'Права успешно обновлены'}, status=status.HTTP_200_OK)
