@@ -1,6 +1,8 @@
 from http.client import responses
+from tokenize import TokenError
 
 from django.contrib.auth import authenticate
+from django.core.serializers import serialize
 from django.shortcuts import render, get_object_or_404
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -9,7 +11,8 @@ from rest_framework_simplejwt.tokens import RefreshToken
 
 # Create your views here.
 from users.models import User
-from users.serializers import UserRegisterSerializer, UserLoginSerializer, UserProfileSerializer, UserDeleteSerializer
+from users.serializers import UserRegisterSerializer, UserLoginSerializer, UserProfileSerializer, UserDeleteSerializer, \
+    LogoutSerializer
 
 
 class RegisterUserApi(APIView):
@@ -114,7 +117,19 @@ class UserProfileApi(APIView):
 
 
 class UserLogout(APIView):
-    pass
+    serializer_class = LogoutSerializer
+    def post(self,request):
+        serializer = self.serializer_class(data=request.data)
+
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        refresh_token = serializer.validated_data['refresh_token']
+        try:
+            token = RefreshToken(refresh_token)
+            token.blacklist()
+            return Response({'message': 'Успешный выход'}, status=status.HTTP_200_OK)
+        except TokenError :
+            return Response({'error': 'Невалидный токен или истек срок пользования '}, status=status.HTTP_400_BAD_REQUEST)
 
 class DeleteUser(APIView):
     serializer_class = UserDeleteSerializer
