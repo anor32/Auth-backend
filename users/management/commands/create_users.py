@@ -36,17 +36,19 @@ class Command(BaseCommand):
         )
 
         admin = User.objects.create(
+            email='admin@web.top',
             first_name ="Admin",
             last_name = 'Adminov',
             middle_name ='Adminovich',
             is_staff =True,
-            is_super_user=True,
+            is_superuser=True,
             role = admin_role
         )
         admin.set_password('qwerty123')
         admin.save()
 
         moderator = User.objects.create(
+            email='moderator@web.top',
             first_name="Moderator",
             last_name="Moderatov",
             middle_name="Moderatorovich",
@@ -58,6 +60,7 @@ class Command(BaseCommand):
         moderator.save()
 
         user = User.objects.create(
+            email='user@web.top',
             first_name="User",
             last_name="Userov",
             middle_name="Userovich",
@@ -67,3 +70,4 @@ class Command(BaseCommand):
         )
         user.set_password('adminlol')
         user.save()
+print("Успешно Созданы пользователи")
