@@ -1,12 +1,12 @@
 from django.contrib import admin
-from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
-from django.contrib.auth import get_user_model
-from users.models import Role
+
+from users.models import Role,User
 
 @admin.register(Role)
 class RoleAdmin(admin.ModelAdmin):
     list_display = ('name',)
 
+@admin.register(User)
 class UserAdmin(admin.ModelAdmin):
-    list_display = ('username', 'email', 'role')
+    list_display = ( 'email', 'role','first_name')
     list_editable = ('role',)
